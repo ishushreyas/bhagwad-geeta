@@ -15,7 +15,7 @@ const VerseSearchForm = ({ onVerseFound }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/chapter/${searchParams.chapter}/verse/${searchParams.verse}`
+        `https://bhagwad-geeta.onrender.com/api/chapter/${searchParams.chapter}/verse/${searchParams.verse}`
       );
 
       if (!response.ok) {
