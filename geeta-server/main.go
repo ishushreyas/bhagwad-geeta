@@ -121,7 +121,7 @@ func getEnv(v string) string {
 func initDB() {
 	
     // Connection string for CockroachDB
-    connStr := loadEnv("CONNECTION_STRING") 
+    connStr := getEnv("CONNECTION_STRING") 
     // Open database connection
     var err error
     db, err = sql.Open("postgres", connStr)
