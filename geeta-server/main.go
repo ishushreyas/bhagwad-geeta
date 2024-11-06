@@ -159,7 +159,7 @@ func handleVerse(w http.ResponseWriter, r *http.Request) {
 func enableCors(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         // Allow only requests from frontend
-        var SITE_URL = "http://localhost:5173"
+        var SITE_URL = "https://bhagwad-geeta.vercel.app/"
         origin := r.Header.Get("Origin")
         if origin == SITE_URL {
             w.Header().Set("Access-Control-Allow-Origin", origin)
