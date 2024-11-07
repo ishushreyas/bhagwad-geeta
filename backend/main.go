@@ -165,7 +165,7 @@ func main() {
 
     r := mux.NewRouter()
 
-    r.HandleFunc("/", func (w http.ResponseWriter, *http.Request) {
+    r.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
     	enableCors(&w)
 	respondWithJSON(w, 200, map[string]string{"message": "Ready"})
     })
