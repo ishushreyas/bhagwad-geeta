@@ -1,26 +1,35 @@
-# Step 1: Build the React frontend
-FROM node:22-alpine AS build-frontend
-WORKDIR /app/frontend
-COPY ./frontend/package*.json ./
+# Dockerfile
+# Stage 1: Build Frontend
+FROM node:18-alpine as frontend-builder
+WORKDIR /frontend
+COPY frontend/package*.json ./
 RUN npm install
-COPY ./frontend ./
+COPY frontend/ ./
 RUN npm run build
 
-# Step 2: Build the Go backend
-FROM golang:1.23-alpine AS build-backend
-WORKDIR /app/backend
-COPY ./backend/go.mod ./backend/go.sum ./
+# Stage 2: Build Backend
+FROM golang:1.21-alpine as backend-builder
+WORKDIR /backend
+COPY backend/go.* ./
 RUN go mod download
-COPY ./backend ./
-# Copy the 'dist' folder from the frontend build
-COPY --from=build-frontend /app/frontend/dist ./frontend/dist
-RUN go build -o server .
+COPY backend/ ./
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
-# Step 3: Run the combined service
-FROM alpine:latest
-WORKDIR /root/
-COPY --from=build-backend /app/backend/server .
-COPY --from=build-backend /app/backend/frontend/dist ./frontend/dist
-EXPOSE 8080
-CMD ["./server"]
+# Stage 3: Final Image
+FROM nginx:alpine
+# Copy frontend build
+COPY --from=frontend-builder /frontend/build /usr/share/nginx/html
+# Copy backend binary
+COPY --from=backend-builder /backend/main /app/main
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Install supervisor to manage multiple processes
+RUN apk add --no-cache supervisor
+
+# Create supervisor configuration
+RUN mkdir -p /etc/supervisor.d/
+COPY supervisord.conf /etc/supervisord.conf
+
+EXPOSE 80
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
 
