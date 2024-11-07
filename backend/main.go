@@ -142,7 +142,6 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 }
 
 func handleVerse(w http.ResponseWriter, r *http.Request) {
-    enableCors(&w)
     vars := mux.Vars(r)
     chapter := vars["chapterID"]
     verseNumber := vars["verseID"]
@@ -166,6 +165,10 @@ func main() {
 
     r := mux.NewRouter()
 
+    r.HandleFunc("/", func (w http.ResponseWriter, *http.Request) {
+    	enableCors(&w)
+	respondWithJSON(w, 200, map[string]string{"message": "Ready"})
+    }
     r.HandleFunc("/chapter/{chapterID}/verse/{verseID}", handleVerse)
 
     http.ListenAndServe(":8080", r)
