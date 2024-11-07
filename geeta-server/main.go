@@ -183,6 +183,7 @@ func main() {
 
     r := mux.NewRouter()
 
+    fs := http.FileServer(http.Dir("./frontend/dist"))
     r.HandleFunc("/api/chapter/{chapterID}/verse/{verseID}", handleVerse)
 
     http.ListenAndServe(":8080", enableCors(r))
