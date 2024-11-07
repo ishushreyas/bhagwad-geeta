@@ -119,7 +119,6 @@ func getEnv(v string) string {
 }
 
 func initDB() {
-	
     // Connection string for CockroachDB
     connStr := getEnv("CONNECTION_STRING") 
     // Open database connection
@@ -143,6 +142,7 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 }
 
 func handleVerse(w http.ResponseWriter, r *http.Request) {
+    enableCors(&w)
     vars := mux.Vars(r)
     chapter := vars["chapterID"]
     verseNumber := vars["verseID"]
@@ -168,5 +168,5 @@ func main() {
 
     r.HandleFunc("/chapter/{chapterID}/verse/{verseID}", handleVerse)
 
-    http.ListenAndServe(":8080", enableCors(r))
+    http.ListenAndServe(":8080", r)
 }
