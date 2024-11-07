@@ -156,6 +156,10 @@ func handleVerse(w http.ResponseWriter, r *http.Request) {
     respondWithJSON(w, 200, verse)
 }
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "https://open-the.vercel.app")
+}
+
 func main() {
     initDB()
     defer db.Close()
@@ -164,5 +168,5 @@ func main() {
 
     r.HandleFunc("/chapter/{chapterID}/verse/{verseID}", handleVerse)
 
-    http.ListenAndServe(":8080", r)
+    http.ListenAndServe(":8080", enableCors(r))
 }
