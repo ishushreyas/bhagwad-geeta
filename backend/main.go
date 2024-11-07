@@ -168,7 +168,7 @@ func main() {
     r.HandleFunc("/", func (w http.ResponseWriter, *http.Request) {
     	enableCors(&w)
 	respondWithJSON(w, 200, map[string]string{"message": "Ready"})
-    }
+    })
     r.HandleFunc("/chapter/{chapterID}/verse/{verseID}", handleVerse)
 
     http.ListenAndServe(":8080", r)
