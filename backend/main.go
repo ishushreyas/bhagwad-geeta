@@ -156,36 +156,13 @@ func handleVerse(w http.ResponseWriter, r *http.Request) {
     respondWithJSON(w, 200, verse)
 }
 
-func enableCors(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        // Allow only requests from frontend
-        var SITE_URL = "https://bhagwad-geeta.vercel.app/"
-        origin := r.Header.Get("Origin")
-        if origin == SITE_URL {
-            w.Header().Set("Access-Control-Allow-Origin", origin)
-            w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-            w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-        }
-
-        // Handle preflight requests (OPTIONS)
-        if r.Method == "OPTIONS" && origin == SITE_URL {
-            w.WriteHeader(http.StatusOK)
-            return
-        }
-
-        next.ServeHTTP(w, r)
-    })
-}
-
 func main() {
     initDB()
     defer db.Close()
 
     r := mux.NewRouter()
 
-    fs := http.FileServer(http.Dir("./frontend/dist"))
-    r.Handle("/", fs)
-    r.HandleFunc("/api/chapter/{chapterID}/verse/{verseID}", handleVerse)
+    r.HandleFunc("/chapter/{chapterID}/verse/{verseID}", handleVerse)
 
-    http.ListenAndServe(":8080", enableCors(r))
+    http.ListenAndServe(":8080", r)
 }
