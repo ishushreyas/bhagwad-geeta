@@ -18,7 +18,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 # Stage 3: Final Image
 FROM nginx:alpine
 # Copy frontend build
-COPY --from=frontend-builder /frontend/build /usr/share/nginx/html
+COPY --from=frontend-builder /frontend/dist /usr/share/nginx/html
 # Copy backend binary
 COPY --from=backend-builder /backend/main /app/main
 # Copy nginx configuration
