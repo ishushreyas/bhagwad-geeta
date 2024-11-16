@@ -105,7 +105,7 @@ func getEnv(v string) string {
 
 	envVar := os.Getenv(v)
 	if envVar == "" {
-		log.Fatalf("%s not found in environment variables", v)
+		log.Printf("%s not found in environment variables", v)
 	}
 
 	return envVar
@@ -164,5 +164,6 @@ func main() {
     })
     r.HandleFunc("/chapter/{chapterID}/verse/{verseID}", handleVerse)
 
-    http.ListenAndServe(":8080", r)
+    log.Println("Listening on 8080")
+    log.Fatal(http.ListenAndServe(":8080", r))
 }
