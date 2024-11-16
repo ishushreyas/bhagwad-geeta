@@ -8,7 +8,6 @@ import (
     "net/http"
     "os"
 
-    "github.com/joho/godotenv"
     _ "github.com/lib/pq"
     "github.com/gorilla/mux"
 )
@@ -103,12 +102,6 @@ func GetVerseWithComments(db *sql.DB, verseID string) (*Verse, error) {
 }
 
 func getEnv(v string) string {
-    if os.Getenv("RENDER_SERVICE_ID") == "" { // (Render sets RENDER_SERVICE_ID in production)
-		err := godotenv.Load()
-		if err != nil {
-			log.Println("env not found in RENDER development")
-		}
-	}
 
 	envVar := os.Getenv(v)
 	if envVar == "" {
