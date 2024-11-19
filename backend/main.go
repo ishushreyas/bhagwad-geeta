@@ -7,6 +7,7 @@ import (
     "log"
     "net/http"
     "os"
+    "strconv"
 
     "github.com/joho/godotenv"
     _ "github.com/lib/pq"
@@ -183,7 +184,7 @@ func main() {
     //Congiguration
     config := DBConfig {
 	    Host: getEnv("HOST"),
-	    Port: getEnv("DB_PORT"),
+	    Port: strconv.Atoi(getEnv("DB_PORT")),
 	    Database: getEnv("DATABASE"),
 	    User: getEnv("USER"),
 	    Password: getEnv("PASSWORD"),
