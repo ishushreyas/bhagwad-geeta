@@ -38,6 +38,17 @@ type Commentary struct {
     HindiCommentary    *string `json:"hindi_commentary,omitempty"`
 }
 
+// DBConfig holds database connection configuration
+type DBConfig struct {
+    Host     string
+    Port     int
+    Database string
+    User     string
+    Password string
+    SSLMode  string
+    SSLRootCert string
+}
+
 // GetVerseWithComments retrieves a verse and its comments by verse ID
 func GetVerseWithComments(db *sql.DB, verseID string) (*Verse, error) {
     // First get the verse
@@ -102,7 +113,12 @@ func GetVerseWithComments(db *sql.DB, verseID string) (*Verse, error) {
 }
 
 func getEnv(v string) string {
-
+	if os.Getenv("RENDER_SERVICE_ID") == "" { // (Render sets RENDER_SERVICE_ID in production)
+		err := godotenv.Load()
+		if err != nil {
+			log.Println("env not found in RENDER development")
+		}
+	}
 	envVar := os.Getenv(v)
 	if envVar == "" {
 		log.Printf("%s not found in environment variables", v)
@@ -111,9 +127,19 @@ func getEnv(v string) string {
 	return envVar
 }
 
-func initDB() {
+func initDB(config DBConfig) {
     // Connection string for CockroachDB
-    connStr := getEnv("CONNECTION_STRING") 
+    connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s",
+                config.Host, config.Port, config.User, config.Password, config.Database)
+
+        if sslMode != "" {
+                connStr += fmt.Sprintf(" sslmode=%s", config.SSLMode)
+
+                if sslRootCert != "" {
+                        connStr += fmt.Sprintf(" sslrootcert=%s", config.SSLRootCert)
+                }
+        }
+
     // Open database connection
     var err error
     db, err = sql.Open("postgres", connStr)
@@ -153,7 +179,18 @@ func enableCors(w *http.ResponseWriter) {
 }
 
 func main() {
-    initDB()
+    //Congiguration
+    config := DBConfig {
+	    Host: getEnv("HOST"),
+	    Port: getEnv("PORT"),
+	    Database: getEnv("DATABASE"),
+	    User: getEnv("USER"),
+	    Password: getEnv("PASSWORD"),
+	    SSLMode: getEnv("SSLMODE"),
+	    SSLRootCert: getEnv("SSLROOTCERT"),
+    }
+
+    initDB(config)
     defer db.Close()
 
     r := mux.NewRouter()
