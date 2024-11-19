@@ -181,10 +181,11 @@ func enableCors(w *http.ResponseWriter) {
 }
 
 func main() {
+	port, err := strconv.Atoi(getEnv("DB_PORT"))
     //Congiguration
     config := DBConfig {
 	    Host: getEnv("HOST"),
-	    Port: strconv.Atoi(getEnv("DB_PORT")),
+	    Port: port,
 	    Database: getEnv("DATABASE"),
 	    User: getEnv("USER"),
 	    Password: getEnv("PASSWORD"),
