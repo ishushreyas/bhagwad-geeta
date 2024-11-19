@@ -8,6 +8,7 @@ import (
     "net/http"
     "os"
 
+    "github.com/joho/godotenv"
     _ "github.com/lib/pq"
     "github.com/gorilla/mux"
 )
@@ -132,10 +133,10 @@ func initDB(config DBConfig) {
     connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s",
                 config.Host, config.Port, config.User, config.Password, config.Database)
 
-        if sslMode != "" {
+        if config.SSLMode != "" {
                 connStr += fmt.Sprintf(" sslmode=%s", config.SSLMode)
 
-                if sslRootCert != "" {
+                if config.SSLRootCert != "" {
                         connStr += fmt.Sprintf(" sslrootcert=%s", config.SSLRootCert)
                 }
         }
@@ -182,7 +183,7 @@ func main() {
     //Congiguration
     config := DBConfig {
 	    Host: getEnv("HOST"),
-	    Port: getEnv("PORT"),
+	    Port: getEnv("DB_PORT"),
 	    Database: getEnv("DATABASE"),
 	    User: getEnv("USER"),
 	    Password: getEnv("PASSWORD"),
